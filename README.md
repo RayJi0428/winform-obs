@@ -4,12 +4,14 @@ winform-obs
 # 環境建置
 ## 建立OBS環境
 + 安裝 [OBS軟體](https://obsproject.com/download) 目前使用版本27.0.1
-
+<a href="https://imgur.com/jHq8xID"><img src="https://i.imgur.com/jHq8xID.png" title="source: imgur.com" /></a>
 
 + 為本機OBS安裝 [websocket插件](https://github.com/Palakis/obs-websocket/releases/tag/4.9.1)，這樣WinForm才有辦法連接發指令。[obs-websocket API文件](https://github.com/Palakis/obs-websocket/blob/4.x-current/docs/generated/protocol.md)
-
+<a href="https://imgur.com/Y8y7T6c"><img src="https://i.imgur.com/Y8y7T6c.png" title="source: imgur.com" /></a>
+<a href="https://imgur.com/4qQofdn"><img src="https://i.imgur.com/4qQofdn.png" title="source: imgur.com" /></a>
 + 開啟obs設定port位及密碼
   
+  <a href="https://imgur.com/QASWA96"><img src="https://i.imgur.com/QASWA96.png" title="source: imgur.com" /></a>
 + 設定輸出錄影格式
     + 類型：自訂輸出(FFmpeg)
     + 封裝格式：mpegts(目前使用jsmpeg播放)
@@ -18,7 +20,7 @@ winform-obs
     + 音效位元率(kbit/s)：128kbps
     + 音軌：勾選1(全勾選會有效能問題，影片播放變超慢)
     + 音效編碼器：mp2(要注意錄影時主介面下方輸出音效是否有反應，沒有表示沒錄到聲音)
-
+<a href="https://imgur.com/QTIO0qh"><img src="https://i.imgur.com/QTIO0qh.png" title="source: imgur.com" /></a>
 ## 建立winform專案
 + Windows Forms App(.NET Framework 4.6.1)
   + 設定Form1.cs寬高
@@ -26,18 +28,21 @@ winform-obs
   
 + 建立WebView
   + 下載 [EO.Browser](https://www.essentialobjects.com/Download.aspx) 相關檔案並安裝
+  <a href="https://imgur.com/7uFakpU"><img src="https://i.imgur.com/7uFakpU.png" title="source: imgur.com" /></a>
   + 安裝完畢照[說明](https://www.essentialobjects.com/doc/webbrowser/start/winform.aspx)操作VisualStudio
-  + 開啟VisualStudio後, 先確認工具箱是否有EO.WebBrowser.WebControl
+  + 開啟VisualStudio後, 先確認工具箱是否有EO.WebBrowser.WebControl、WebView
+  <a href="https://imgur.com/xogwz9w"><img src="https://i.imgur.com/xogwz9w.png" title="source: imgur.com" /></a>
   + 沒有就從"工具->選擇工具箱項目->瀏覽"，找到安裝目錄(C:\Program Files\Essential Objects\EO.Total 2021)內的dll套件
     + EO.WebBrowser.dll
     + EO.WebBrowser.WinForm.dll
+  <a href="https://imgur.com/ZuMTrNk"><img src="https://i.imgur.com/ZuMTrNk.png" title="source: imgur.com" /></a>
   + 再看看專案"參考"是否存在EO.WebBrowser、EO.WebBrowser.WinForm
   + 若有缺漏，右鍵點擊"參考"加入參考，同樣瀏覽dll檔案並加入
   + 在工具箱EO.WebBrowser找到WebControl，拖到視窗內同時自動創建WebView，設定寬高、名稱(預設webView1)
 
 + obs-websocket
     + 直接使用NuGet安裝 [obs-weboscket-dotnet4.9.0套件](https://github.com/BarRaider/obs-websocket-dotnet)
-    + 建立obs-webscoket實體
+  <a href="https://imgur.com/WQIqx4k"><img src="https://i.imgur.com/WQIqx4k.png" title="source: imgur.com" /></a>
 
 # 流程串接
 + 對Form1.cs介面雙擊生成基本代碼，在From1建構式內指定URL
@@ -48,7 +53,7 @@ winform-obs
    ```csharp
    EO.Base.Runtime.EnableEOWP = true;
    ```
-+ 監聽OBS連接事件並測試連線
++ 建立OBS實體並監聽連接事件，開始連線
    ```csharp
    _obs = new OBSWebsocket();
    _obs.Connected += onConnect;
@@ -58,14 +63,14 @@ winform-obs
    ```csharp
    private void onConnect(object sender, EventArgs e)
     {
-        //更換影片放置資料夾
+        //更換影片放置資料夾(目前測試無法更換...)
         _obs.SetRecordingFolder("D:\\git\\VisualStudio\\WebViewTest\\WebViewTest\\video");
         string profile = _obs.GetCurrentProfile();
         OBSScene scene = _obs.GetCurrentScene();
         this.isConnect = true;
     }
    ```
-+ WebView添加自定義function(Form1.Designer.cs)
++ WebView添加自定義function讓頁面能驅動WinForm(Form1.Designer.cs)
     ```csharp
    //對webview註冊自定義function
    this.webView1.RegisterJSExtensionFunction("demoAbout", new JSExtInvokeHandler(WebView_JSDemoAbout));
